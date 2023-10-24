@@ -10,7 +10,7 @@ def create_tables():
         first_name VARCHAR(255),
         last_name VARCHAR(255),
         date_registered DATE NOT NULL,
-        last_channel_visit DATE
+        last_channel_visit TIMESTAMP
     )
     """
     query_request(query, None)
