@@ -2,14 +2,16 @@ import asyncio
 import logging
 import sys
 from os import getenv
-from strenum import StrEnum
+
 from aiogram import Bot, Dispatcher, F, Router, types
 from aiogram.enums import Currency, ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
+from db.query.create_tables import create_tables
 from db.query.create_user import create_user
 from dotenv import load_dotenv
+from strenum import StrEnum
 
 load_dotenv()
 
@@ -46,14 +48,7 @@ async def command_start_handler(message: Message) -> None:
     # method automatically or call API method directly via
     # Bot instance: `bot.send_message(chat_id=message.chat.id, ...)`
     create_user(message)
-
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button_1 = types.KeyboardButton(text=MainKeyboardMessages.pr)
-    button_2 = types.KeyboardButton(text=CONVERT_BINARY_CODE_IN_WORD)
-    button_3 = types.KeyboardButton(text=GAMES_GUESS_NUMBER)
-    button_4 = types.KeyboardButton(text=ME_PROFILE)
-    button_5 = types.KeyboardButton(text='/Exit')
-    keyboard.add(button_1, button_2, button_3, button_4, button_5)
+    create_tables()
     await message.answer(f'Hello, {hbold(message.from_user.full_name)}!')
 
 
