@@ -88,6 +88,24 @@ def create_tables():
     """
     query_request(query, None)
 
+    query = """
+        CREATE TABLE Profile (
+            id SERIAL PRIMARY KEY,
+            user_id INT UNIQUE,
+            FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+            bio TEXT,
+            completed_tasks INT,
+            failed_missions INT,
+    )
+    """  # нужно придумать, чет маловато.
+    query_request(query, None)
+
+    query = """
+        CREATE TABLE Achievement (
+    )
+    """  # мудак года и все такое
+    query_request(query, None)
+
 
 if __name__ == '__main__':
     create_tables()
