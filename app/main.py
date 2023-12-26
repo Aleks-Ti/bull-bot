@@ -8,8 +8,8 @@ from aiogram.enums import Currency, ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
-from db.query.create_tables import create_tables
-from db.query.create_user import create_user
+from models.query.create_tables import create_tables
+from models.query.create_user import create_user
 from dotenv import load_dotenv
 from strenum import StrEnum
 

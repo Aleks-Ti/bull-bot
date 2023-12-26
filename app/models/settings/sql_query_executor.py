@@ -1,4 +1,4 @@
-from db.settings.connector import db_pool
+from models.settings.connector import db_pool
 
 
 def query_request(query, query_condition):

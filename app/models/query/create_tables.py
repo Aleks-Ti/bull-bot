@@ -1,4 +1,4 @@
-from db.settings.sql_query_executor import query_request
+from models.settings.sql_query_executor import query_request
 
 
 def create_tables():
