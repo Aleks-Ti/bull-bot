@@ -1,10 +1,12 @@
+import uuid
+
+from dotenv import load_dotenv
 from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, declared_attr, sessionmaker
-from sqlalchemy.dialects.postgresql import UUID
-from app.core.config import DATABASE_URL
-import uuid
-from dotenv import load_dotenv
+
+from core.config import DATABASE_URL
 
 load_dotenv()
 

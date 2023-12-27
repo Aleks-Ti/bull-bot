@@ -1,6 +1,8 @@
-from sqlalchemy import TIMESTAMP, Column, String, Boolean
 from datetime import datetime
-from app.core.db import Base
+
+from sqlalchemy import TIMESTAMP, Boolean, Column, String
+
+from core.db import Base
 
 
 class Reminder(Base):

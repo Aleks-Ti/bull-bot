@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from dotenv import load_dotenv
 from alembic import context
 import os
-# from app.models.users import *  # noqa
-from app.models import Base
+from app.models import Base  # noqa Вытягивает модели для видимости alembic при миграциях 
+# from app.models.users import *  # noqa Или можно создать файл прослойку, но механизм подтягивания моделей тот же самый
 
 
 load_dotenv()

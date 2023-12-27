@@ -8,31 +8,25 @@ from aiogram.enums import Currency, ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
-from models.query.create_tables import create_tables
-from models.query.create_user import create_user
+from core.utils import MainKeyboard as mk
 from dotenv import load_dotenv
-from strenum import StrEnum
+from crud.users import create_user
 
 load_dotenv()
 
-# Bot token can be obtained via https://t.me/BotFather
 TOKEN = getenv('BOT_TOKEN')
 
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
 
 
-class MainKeyboardMessages(StrEnum):
-    projects: str = 'Проект'
-
-
-
 @dp.message(
-    (F.text == '/projects') | (F.text == MainKeyboardMessages.projects),
+    (F.text == mk.create_reminds) | (F.text == mk.create_reminds),
 )
 async def handle_projects(message: types.Message):
-    """Это рабочее, ловит Проект и /projects."""
-    print('asdasdas')
+    """"""
+    print(mk.create_reminds)
+
 
 
 @dp.message(CommandStart())
@@ -42,14 +36,29 @@ async def command_start_handler(message: Message) -> None:
     """
     if message:
         pass
+
+    await create_user(message)
+    # keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button_1 = types.KeyboardButton(text=mk.create_reminds)
+    button_2 = types.KeyboardButton(text='/view_reminds')
+    button_3 = types.KeyboardButton(text='/view_reminds_id')
+    button_4 = types.KeyboardButton(text='/off_remind_today')
+    button_5 = types.KeyboardButton(text='/Exit')
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=[
+                    [button_1], [button_2], [button_3], [button_4], [button_5],
+                ], resize_keyboard=True,
+        )
+
     # Most event objects have aliases for API methods that can be called in events' context
     # For example if you want to answer to incoming message you can use `message.answer(...)` alias
     # and the target chat will be passed to :ref:`aiogram.methods.send_message.SendMessage`
     # method automatically or call API method directly via
     # Bot instance: `bot.send_message(chat_id=message.chat.id, ...)`
-    create_tables()
-    create_user(message)
-    await message.answer(f'Hello, {hbold(message.from_user.full_name)}!')
+    # create_user(message)
+    await message.answer(
+        f'Привет, {hbold(message.from_user.full_name)}!', reply_markup=keyboard,
+    )
 
 
 async def main() -> None:

@@ -37,6 +37,9 @@ extend-exclude = [  # игнор файлов и директорий
     "node_modules",
     "venv",
     "ex_venv",
+    "env.py",
+    "versions",
+    "migrations",
 ]
 
 [per-file-ignores]

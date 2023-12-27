@@ -1,15 +1,13 @@
-from sqlalchemy import ForeignKey, Column, Integer
-from datetime import datetime
-from app.core.db import Base
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-import uuid
+
+from core.db import Base
 
 
 class UserReminder(Base):
     users_id = Column(UUID, ForeignKey(
-        'user.id', ondelete='CASCADE'), primary_key=True
+        'user.id', ondelete='CASCADE'), primary_key=True,
     )
     reminder_id = Column(UUID, ForeignKey(
-        'reminder.id', ondelete='CASCADE'), primary_key=True
+        'reminder.id', ondelete='CASCADE'), primary_key=True,
     )
