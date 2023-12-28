@@ -27,6 +27,6 @@ engine = create_async_engine(DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession)
 
 
-async def get_async_session():
-    async with AsyncSessionLocal() as async_session:
-        yield async_session
+# async def get_async_session():
+#     async with AsyncSessionLocal() as async_session:
+#         yield async_session
