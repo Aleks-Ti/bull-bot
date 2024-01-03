@@ -16,10 +16,10 @@ from crud.users import create_user, get_user
 from crud.reminders import reminder_create as rem_create
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-
+from celery import Celery
 
 load_dotenv()
-
+app = Celery('tasks', backend='rpc://', broker='pyamqp://guest@localhost//')
 TOKEN = getenv('BOT_TOKEN')
 
 # All handlers should be attached to the Router (or Dispatcher)
@@ -44,6 +44,12 @@ class SingleReminderState(StatesGroup):
 
     description = State()
     cancel = State()
+
+
+@app.task
+async def send_reminder(user_id, text):
+    print('я тут')
+    pass
 
 
 @dp.message(Command("cancel"))
@@ -87,20 +93,46 @@ async def view_reminder_id(message: types.Message):
 
 
 @dp.message((F.text == mk.view_reminders))
-async def view_reminders(message: types.Message):
+async def view_reminders(message: types.Message, state: FSMContext):
     """"""
     print(mk.view_reminders)
 
 
-@dp.message((F.text == mk.view_reminders))
-async def create_reminder(callback_query: types.CallbackQuery, state=FSMContext):
+@dp.message(CycleReminderState.description)
+async def process_create_cycle_reminder(
+    message: types.Message, state: CycleReminderState
+):
     """"""
+    print('пойман ввод/cycle стэйте машин')
+
+
+@dp.message(SingleReminderState.description)
+async def process_create_reminder(
+    message: types.Message, state: SingleReminderState
+):
+    """"""
+    user_id = message.from_user.id
+    text = message.text
+    print(text)
+    print('пойман ввод/стэйте машин')
+    send_reminder.apply_async(args=(user_id, text), countdown=60)
+    await message.answer('Напоминание установлено!')
+
+
+@dp.message((F.text == mk.view_reminders))
+async def create_reminder(
+    callback_query: types.CallbackQuery, state=FSMContext
+):
+    """"""
+
     if rk.cycle_reminder == callback_query.data:
         await state.set_state(CycleReminderState.description)
-        await callback_query.message.reply('Введи время')
+        await callback_query.message.reply(
+            'Введи время: 1-12 h or 3, 0:28 h:min or :46 h:min'
+        )
     else:
         await state.set_state(SingleReminderState.description)
-        await callback_query.message.reply('Введите двоичный код 📟 для дешифрации___ ')
+        await callback_query.message.reply('Введите дату и время: 03.01 13:55')
     print(mk.view_reminders)
 
 
@@ -139,7 +171,7 @@ async def command_start_handler(message: Message) -> None:
         pass
 
     await create_user(message)
-    await get_user(message)
+    # await get_user(message)
 
     button_1 = types.KeyboardButton(text=mk.create_reminders)
     button_2 = types.KeyboardButton(text=mk.view_reminders)
@@ -153,9 +185,9 @@ async def command_start_handler(message: Message) -> None:
         resize_keyboard=True,
     )
 
-    # Most event objects have aliases for API methods that can be called in events' context
-    # For example if you want to answer to incoming message you can use `message.answer(...)` alias
-    # and the target chat will be passed to :ref:`aiogram.methods.send_message.SendMessage`
+    # noqa Most event objects have aliases for API methods that can be called in events' context
+    # noqa For example if you want to answer to incoming message you can use `message.answer(...)` alias
+    # noqa and the target chat will be passed to :ref:`aiogram.methods.send_message.SendMessage`
     # method automatically or call API method directly via
     # Bot instance: `bot.send_message(chat_id=message.chat.id, ...)`
     await message.answer(
@@ -165,7 +197,7 @@ async def command_start_handler(message: Message) -> None:
 
 
 async def main() -> None:
-    # Initialize Bot instance with a default parse mode which will be passed to all API calls
+    # noqa Initialize Bot instance with a default parse mode which will be passed to all API calls
     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
     # And the run events dispatching
     await dp.start_polling(bot)
