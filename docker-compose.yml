@@ -1,0 +1,25 @@
+version: '3.3'
+
+
+services:
+  bot:
+    build: ./
+    env_file: .env
+    depends_on:
+      - redis
+      - postgres
+  redis:
+    image: "redis:6.2-alpine"
+    restart: always
+    volumes:
+      - redis_data:/data
+  postgres:
+    image: postgres:13
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    env_file: .env
+
+
+volumes:
+  pg_data:
+  redis_data:

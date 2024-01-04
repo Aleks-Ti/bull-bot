@@ -19,7 +19,7 @@ from aiogram.fsm.context import FSMContext
 from celery import Celery
 
 load_dotenv()
-app = Celery('tasks', backend='rpc://', broker='pyamqp://guest@localhost//')
+app = Celery('tasks', backend='rpc://', broker='pyamqp://guest@redis//')
 TOKEN = getenv('BOT_TOKEN')
 
 # All handlers should be attached to the Router (or Dispatcher)
@@ -48,8 +48,9 @@ class SingleReminderState(StatesGroup):
 
 @app.task
 async def send_reminder(user_id, text):
-    print('я тут')
-    pass
+    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+    bot.send_message(chat_id=user_id, text=text)
+
 
 
 @dp.message(Command("cancel"))
