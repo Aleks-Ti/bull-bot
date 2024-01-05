@@ -1,6 +1,3 @@
-from crud.reminders import reminder_create
-
-
 class MainKeyboard:
     """
     Кнопки для главного меню.
@@ -49,4 +46,3 @@ class ReminderKeyboard:
     cycle_reminder: str = 'Циклическое напоминание'
     single_reminder: str = 'Одноразовое напоминание'
     cancel: str = 'Отмена'
-

@@ -12,18 +12,23 @@ from core.utils import (
     MainKeyboard as mk, ReminderKeyboard as rk
 )
 from dotenv import load_dotenv
-from crud.users import create_user, get_user
-from crud.reminders import reminder_create as rem_create
+from crud.users import create_user
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from celery import Celery
+from celery_settings.tasks import send_reminder
 
 load_dotenv()
-app = Celery('tasks', backend='rpc://', broker='pyamqp://guest@redis//')
+
+
 TOKEN = getenv('BOT_TOKEN')
 
-# All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
+
+
+# @app.task
+# def send_reminder(user_id, text):
+#     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+#     bot.send_message(chat_id=user_id, text=text)
 
 
 class CycleReminderState(StatesGroup):
@@ -44,13 +49,6 @@ class SingleReminderState(StatesGroup):
 
     description = State()
     cancel = State()
-
-
-@app.task
-async def send_reminder(user_id, text):
-    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
-    bot.send_message(chat_id=user_id, text=text)
-
 
 
 @dp.message(Command("cancel"))
@@ -74,9 +72,6 @@ async def handle_callback_query(
     callback_data = callback_query.data
 
     if callback_data in rk.__dict__.values():
-        CONTROL = 'CONTROL'
-        CONTROL = CONTROL
-        CONTROL = CONTROL + CONTROL
         await reminder_call_func[callback_data](callback_query, state)
         # await dp.callback_query(callback_query.id)
 
@@ -116,7 +111,7 @@ async def process_create_reminder(
     text = message.text
     print(text)
     print('пойман ввод/стэйте машин')
-    send_reminder.apply_async(args=(user_id, text), countdown=60)
+    send_reminder.apply_async(args=(user_id, text), countdown=30)
     await message.answer('Напоминание установлено!')
 
 

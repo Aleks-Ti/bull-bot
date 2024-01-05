@@ -21,13 +21,7 @@ services:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
-  celery:
-    image: "celery"
-    env_file: .env
-    command: celery worker --loglevel=info
-    depends_on:
-      - bot
-      - redis
+
 
 volumes:
   pg_data:
